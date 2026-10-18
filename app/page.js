@@ -1,96 +1,12 @@
-﻿import { createClient } from '@supabase/supabase-js'
-
-export const dynamic = 'force-dynamic'
-
-export default async function HomePage() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-
-  let congregacoes = []
-  let eventos = []
-  let avisos = []
-  let erroConexao = null
-
-  if (supabaseUrl && supabaseKey) {
-    try {
-      const supabase = createClient(supabaseUrl, supabaseKey)
-      const [resCong, resEv, resAv] = await Promise.all([
-        supabase.from('congregacoes').select('*').order('id'),
-        supabase.from('eventos').select('*').order('id'),
-        supabase.from('avisos').select('*').eq('ativo', true).order('id')
-      ])
-      congregacoes = resCong.data || []
-      eventos = resEv.data || []
-      avisos = resAv.data || []
-      if (resCong.error) erroConexao = resCong.error.message
-    } catch (err) {
-      erroConexao = err.message
-    }
-  } else {
-    erroConexao = 'Variáveis de ambiente do Supabase não encontradas.'
-  }
-
-  return (
-    <div>
-      <header style={{ background: 'linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%)', color: 'white', padding: '3rem 1.5rem', textAlign: 'center', borderBottom: '4px solid #eab308' }}>
-        <h1 style={{ margin: 0, fontSize: '2.2rem' }}>AD Madureira — Campo Goiatuba</h1>
-        <p style={{ marginTop: '0.75rem', fontSize: '1.1rem', opacity: 0.9 }}>
-          Portal Oficial de Comunicação, Eventos e Congregações
-        </p>
-      </header>
-
-      <main style={{ maxWidth: '1000px', margin: '2rem auto', padding: '0 1.5rem' }}>
-        {erroConexao && (
-          <div style={{ backgroundColor: '#fef2f2', borderLeft: '4px solid #ef4444', color: '#991b1b', padding: '1rem', borderRadius: '6px', marginBottom: '2rem' }}>
-            <strong>Aviso de Conexão:</strong> {erroConexao}
-          </div>
-        )}
-
-        {avisos.length > 0 && (
-          <section style={{ marginBottom: '2.5rem' }}>
-            {avisos.map((aviso) => (
-              <div key={aviso.id} style={{ backgroundColor: '#fef9c3', borderLeft: '5px solid #eab308', padding: '1.25rem', borderRadius: '8px', marginBottom: '1rem' }}>
-                <h3 style={{ margin: '0 0 0.5rem 0', color: '#854d0e' }}>📢 {aviso.titulo}</h3>
-                <p style={{ margin: 0, color: '#713f12' }}>{aviso.conteudo}</p>
-              </div>
-            ))}
-          </section>
-        )}
-
-        <section style={{ marginBottom: '3rem' }}>
-          <h2 style={{ color: '#1e3a8a', borderBottom: '2px solid #e2e8f0', paddingBottom: '0.5rem' }}>📅 Próximos Cultos e Eventos</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem', marginTop: '1rem' }}>
-            {eventos.map((ev) => (
-              <div key={ev.id} style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '10px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)', border: '1px solid #e2e8f0' }}>
-                <span style={{ display: 'inline-block', backgroundColor: '#dbeafe', color: '#1e40af', padding: '0.25rem 0.6rem', borderRadius: '4px', fontSize: '0.85rem', fontWeight: 'bold', marginBottom: '0.75rem' }}>
-                  {ev.data_evento}
-                </span>
-                <h3 style={{ margin: '0 0 0.5rem 0', color: '#0f172a' }}>{ev.titulo}</h3>
-                <p style={{ margin: '0 0 0.75rem 0', color: '#475569', fontSize: '0.95rem' }}>{ev.descricao}</p>
-                <small style={{ color: '#64748b', fontWeight: 500 }}>📍 Local: {ev.local}</small>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section style={{ marginBottom: '3rem' }}>
-          <h2 style={{ color: '#1e3a8a', borderBottom: '2px solid #e2e8f0', paddingBottom: '0.5rem' }}>⛪ Nossas Congregações</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem', marginTop: '1rem' }}>
-            {congregacoes.map((cong) => (
-              <div key={cong.id} style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '10px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)', border: '1px solid #e2e8f0' }}>
-                <h3 style={{ margin: '0 0 0.5rem 0', color: '#1e3a8a' }}>{cong.nome}</h3>
-                <p style={{ margin: '0.35rem 0', color: '#334155', fontSize: '0.95rem' }}><strong>📍 Endereço:</strong> {cong.endereco}</p>
-                <p style={{ margin: '0.35rem 0', color: '#334155', fontSize: '0.95rem' }}><strong>👤 Dirigente:</strong> {cong.dirigente}</p>
-                <p style={{ margin: '0.35rem 0', color: '#334155', fontSize: '0.95rem' }}><strong>🕒 Cultos:</strong> {cong.horario_cultos}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-      </main>
-
-      <footer style={{ backgroundColor: '#0f172a', color: '#94a3b8', textAlign: 'center', padding: '2rem 1rem', marginTop: '4rem' }}>
-        <p style={{ margin: 0 }}>© {new Date().getFullYear()} Assembleia de Deus Ministério de Madureira — Campo de Goiatuba - GO</p>
-      </footer>
-    </div>
-  )
-}
+import Link from 'next/link'
+import {Arrow} from './components'
+import {chapters} from './jornada/content'
+import {ContinueReading} from './reading-tools'
+export default function Home(){return <main id="conteudo">
+<section className="hero" aria-labelledby="hero-title"><div className="hero-image"/><div className="hero-shade"/><div className="shell hero-content"><p className="eyebrow light"><span/>AD PLANALTO · UBERLÂNDIA</p><h1 id="hero-title">Uma história de amor.<br/><em>Um novo começo.</em></h1><p className="hero-description">Da criação à cruz. Da promessa à vida eterna.<br/> Descubra a história que também pode transformar a sua.</p><div className="hero-actions"><Link className="button button-orange" href="/jornada/a-criacao">Conheça o plano de salvação <Arrow/></Link><a className="text-link light-link" href="#nossa-fe">Conheça nossa fé <span>↗</span></a></div><div className="hero-bottom"><span>UMA JORNADA PELA BÍBLIA</span><span>12 capítulos · uma só esperança</span><a href="#jornada" aria-label="Descer para a jornada">↓</a></div></div><span className="image-credit">Paisagem simbólica · ilustração digital</span></section>
+<section id="nossa-fe" className="intro-section shell"><div><p className="eyebrow"><span/>O CORAÇÃO DA NOSSA FÉ</p><h2>Você faz parte<br/>desta <em>história.</em></h2></div><div className="intro-copy"><p>A Bíblia conta uma grande história: o Deus que cria por amor, busca a humanidade e oferece, em Jesus Cristo, o caminho da reconciliação.</p><p>Na AD Planalto, em Uberlândia, queremos compartilhar essa mensagem de fé e esperança. Aqui, você encontra um convite para conhecer Jesus, fazer perguntas e dar seu próximo passo.</p><a className="underlined-link" href="#jornada">Uma história. Doze encontros. <Arrow/></a></div></section>
+<section className="journey-section" id="jornada"><div className="shell"><div className="section-heading"><div><p className="eyebrow"><span/>DO PRINCÍPIO À NOVA VIDA</p><h2>O plano de salvação,<br/><em>capítulo por capítulo.</em></h2></div><p>Comece do início ou escolha um tema.<br/>Leia no seu ritmo e leve a reflexão para a vida.</p></div><ContinueReading/><div className="featured-chapters">{[chapters[0],chapters[3],chapters[10]].map((c,i)=><Link href={`/jornada/${c.slug}`} className={`feature-card feature-${i}`} key={c.slug}><div className="feature-top"><span>CAPÍTULO {String(chapters.indexOf(c)+1).padStart(2,'0')}</span><Arrow/></div><div><p>{c.phase}</p><h3>{c.title}</h3><span className="feature-ref">{c.reference}</span></div></Link>)}</div><div className="chapter-list">{chapters.map((c,i)=><Link href={`/jornada/${c.slug}`} key={c.slug} className="chapter-row"><span className="chapter-no">{String(i+1).padStart(2,'0')}</span><div><h3>{c.short}</h3><p>{c.reference}</p></div><Arrow/></Link>)}</div><p className="journey-caption">Doze leituras conectadas pela mesma mensagem: Deus nos ama e nos chama para perto.</p></div></section>
+<section className="belief-section"><div className="shell belief-layout"><div><p className="eyebrow light"><span/>A MENSAGEM QUE NOS MOVE</p><h2>A graça nos encontra.<br/>A fé nos coloca<br/><em>a caminho.</em></h2></div><div className="belief-copy"><span className="quote-mark" aria-hidden="true">“</span><p>A salvação é um presente de Deus. Não se compra, não se conquista por mérito: é recebida pela fé em Jesus Cristo.</p><span className="reference">Síntese de Efésios 2:8–10</span><Link className="button button-cream" href="/jornada/a-cruz">Entenda o significado da cruz <Arrow/></Link></div></div></section>
+<section className="community-section shell" id="comunidade"><div className="community-heading"><p className="eyebrow"><span/>FÉ VIVIDA EM COMUNIDADE</p><h2>Um lugar para crer.<br/><em>Gente para caminhar junto.</em></h2><p>A fé em Jesus transforma nossa relação com Deus e com as pessoas. Crescemos juntos quando ouvimos a Palavra, oramos e cuidamos uns dos outros.</p></div><div className="community-values"><article><span>01 / CONHECER</span><h3>Conheça Jesus</h3><p>Uma fé com raízes na Palavra. Descubra quem Jesus é e por que sua vida muda a nossa história.</p><Link href="/jornada/jesus-deus-conosco">Leia sobre Jesus <Arrow/></Link></article><article><span>02 / PERTENCER</span><h3>Caminhe em comunhão</h3><p>A vida cristã também acontece no encontro, na escuta e no apoio de uma comunidade de fé.</p><Link href="/jornada/ressurreicao-e-nova-vida">Descubra os próximos passos <Arrow/></Link></article><article><span>03 / SERVIR</span><h3>Viva o amor</h3><p>O amor recebido de Deus se torna cuidado, generosidade e serviço às pessoas ao nosso redor.</p><Link href="/jornada/o-reino-e-o-caminho">Conheça o caminho do serviço <Arrow/></Link></article></div><div className="local-note"><span className="location-dot" aria-hidden="true"/><div><strong>AD Planalto — Uberlândia, MG</strong><p>Informações de endereço, horários e contatos serão divulgadas após confirmação da igreja.</p></div></div></section>
+<section className="invitation"><div className="shell"><p className="eyebrow"><span/>SEU PRÓXIMO PASSO PODE SER HOJE</p><h2>Há esperança.<br/><em>E há lugar para você.</em></h2><Link href="/jornada/a-criacao" className="button button-dark">Comece sua jornada <Arrow/></Link><p>Você não precisa ter todas as respostas para começar.</p></div></section>
+</main>}

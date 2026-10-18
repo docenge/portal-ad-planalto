@@ -1,36 +1,30 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AD Planalto — Uberlândia
 
-## Getting Started
+Site de apresentação da igreja e jornada bíblica em 12 capítulos, da criação à nova vida em Cristo.
 
-First, run the development server:
+## Desenvolvimento
 
-```bash
+```sh
+npm ci
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Compilação e teste
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```sh
+npm run build
+npm run start -- --port 3100
+node scripts/check-site.mjs
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+`SITE_ORIGIN` permite executar a verificação de rotas contra outro endereço. A aplicação usa Next.js 15, React 19 e páginas geradas estaticamente. O progresso de leitura fica no armazenamento local do navegador.
 
-## Learn More
+## Conteúdo
 
-To learn more about Next.js, take a look at the following resources:
+Os capítulos estão em `app/jornada/content.js`, e o modelo das páginas em `app/jornada/[slug]/page.js`. Referências bíblicas são oferecidas para leitura contextual. O conteúdo local da igreja deve ser confirmado antes de divulgar horários, contatos e endereço.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Publicação
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+O repositório está ligado à Vercel. Branches geram prévias; a branch `main` gera produção. O domínio próprio previsto é `www.octatopdicas.com.br`. As tabelas antigas do Supabase foram preservadas, mas não são utilizadas para exibir conteúdos de outra cidade.
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Veja `docs/ENTREGA.md` para verificações, limites e origem da imagem. Nenhuma credencial deve ser adicionada ao repositório.
