@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  outputFileTracingIncludes: { '/api/biblia/download': ['./downloads/biblia-ad-planalto.zip'] },
 };
 
 export default nextConfig;

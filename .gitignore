@@ -4,3 +4,9 @@ node_modules/
 !.env.example
 *.tsbuildinfo
 .vercel/
+
+# Gerados a partir do acervo versionado pelo script prebuild
+public/biblia/leitor/biblia.json
+downloads/biblia-ad-planalto.zip
+
+node_modules
