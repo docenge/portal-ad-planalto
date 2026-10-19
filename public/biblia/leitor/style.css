@@ -3,3 +3,5 @@
 .exit-link{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 18px;border:1px solid var(--accent);border-radius:9px;text-decoration:none;font-weight:600;background:var(--paper);color:var(--accent)}.exit-link:hover{background:var(--accent);color:var(--paper)}.exit-link:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
 
 #heading{scroll-margin-top:20px}
+
+.search-target{background:#e6e9d1;outline:2px solid #ad914e;color:#293c33}#results{scroll-margin-top:20px}#searchform button{white-space:nowrap}
