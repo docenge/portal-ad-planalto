@@ -46,7 +46,7 @@ export default function DownloadBible({url, publicKey}) {
     finally { setBusy(false) }
   }
   const inputStyle = { display: 'block', width: '100%', padding: 12, margin: '8px 0 16px', border: '1px solid #cbd5e1', borderRadius: 6 }
-  return <section style={{ background: '#edf2e8', borderRadius: 12, padding: 24, margin: '24px 0' }}>
+  return <section id="baixar-app" style={{ background: '#edf2e8', borderRadius: 12, padding: 24, margin: '24px 0' }}>
     <h2>Baixar o app gratuitamente</h2>
     <p>Instale pelo navegador para ler em Android, iPhone/iPad, Windows ou Linux. A leitura funciona sem internet depois que o texto completo for salvo no aparelho.</p>
     {installPrompt && <button onClick={install}>Instalar Bíblia neste aparelho</button>}
