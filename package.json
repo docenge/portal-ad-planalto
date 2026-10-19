@@ -22,6 +22,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "prebuild": "node scripts/prepare-biblia.mjs",
+    "predev": "node scripts/prepare-biblia.mjs"
   }
 }
