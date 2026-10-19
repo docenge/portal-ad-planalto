@@ -11,3 +11,12 @@ Texto histórico Almeida 1911, fonte https://api.getbible.net/v2/almeida.json; m
 A identidade visual do cabeçalho e metadados foi atualizada para AD Planalto Uberlândia. Avisos, eventos e congregações existentes continuam sendo lidos do Supabase e precisam de revisão do responsável; não substituímos dados por informações inventadas.
 
 O acervo histórico está versionado em blocos gzip em scripts/biblia-data. npm run build e npm run dev reconstroem o JSON público e o ZIP usando scripts/prepare-biblia.mjs. Os arquivos gerados não precisam ser enviados ao GitHub. A configuração de rastreamento do Next inclui o ZIP no endpoint de download. A integração preserva o frontend atual do portal, inclusive dados já confirmados e a navegação da jornada.
+
+
+## Atualização ortográfica de 19/10/2026
+
+O texto público e o ZIP passam a usar ortografia brasileira atualizada. A fonte histórica versionada continua preservada. scripts/biblia-data/ortografia-br.json contém as equivalências aprovadas e as correções por referência; scripts/prepare-biblia.mjs aplica a revisão de forma determinística, preservando todos os livros, capítulos e números de versículos. A revisão não substitui o texto por uma tradução moderna protegida.
+
+Fontes: GetBible almeida (texto-base), Projeto Gutenberg 62383 (conferência independente) e a comparação entre original/atual de bibliaalmeida.com, que declara seus textos livres para distribuição. Não foi copiada a edição Concordância, que declara direitos reservados. Foram excluídas sugestões que trocavam vocabulário, sentido, flexões verbais ou acentos diferenciais válidos. Nomes próprios menos comuns podem manter grafias tradicionais.
+
+A atualização automática abrange todo o acervo, mas não equivale a uma revisão humana linha a linha. O arquivo público revisao-ortografica.json registra contagens e fontes. O cache do aplicativo foi atualizado para v2 para que instalações antigas recebam os textos corrigidos.

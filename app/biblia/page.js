@@ -8,7 +8,7 @@ export default function BiblePage() {
     <Link href="/">← Voltar ao portal</Link>
     <h1>Bíblia ADP</h1>
     <p>AD Planalto Uberlândia • Leitura gratuita, sem anúncios.</p>
-    <p>Almeida, edição histórica de 1911, com ortografia da fonte preservada. Esta edição não é a ARC moderna.</p>
+    <p>Almeida de 1911 com ortografia atualizada para o português brasileiro. Mantém a linguagem clássica e a estrutura dos versículos; não é uma edição moderna da ARC.</p>
     <DownloadBible url={process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || ''} publicKey={process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''} />
     <h2>Leia a Bíblia aqui no site</h2>
     <a href="/biblia/leitor/index.html">Abrir leitura em tela inteira</a>

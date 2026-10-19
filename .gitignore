@@ -10,3 +10,5 @@ public/biblia/leitor/biblia.json
 downloads/biblia-ad-planalto.zip
 
 node_modules
+
+public/biblia/leitor/revisao-ortografica.json
