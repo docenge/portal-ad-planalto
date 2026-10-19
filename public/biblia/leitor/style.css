@@ -5,3 +5,4 @@
 #heading{scroll-margin-top:20px}
 
 .search-target{background:#e6e9d1;outline:2px solid #ad914e;color:#293c33}#results{scroll-margin-top:20px}#searchform button{white-space:nowrap}
+#searchform{flex-wrap:wrap}#searchform input{flex:1 1 220px}
