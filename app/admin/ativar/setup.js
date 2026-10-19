@@ -1,0 +1,11 @@
+'use client'
+import {useState,useEffect} from 'react'
+import {createClient} from '@supabase/supabase-js'
+import Link from 'next/link'
+export default function Activation({url,publicKey}){
+ const [client]=useState(()=>url&&publicKey?createClient(url,publicKey,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:true}}):null)
+ const [ready,setReady]=useState(false),[done,setDone]=useState(false),[busy,setBusy]=useState(false),[message,setMessage]=useState('Verificando convite…')
+ useEffect(()=>{if(!client){setMessage('Ativação ainda não configurada.');return}let mounted=true;client.auth.getSession().then(({data,error})=>{if(!mounted)return;setReady(Boolean(data.session)&&!error);setMessage(data.session&&!error?'Escolha uma senha exclusiva com pelo menos 12 caracteres.':'Abra esta página pelo convite recebido por e-mail. Se expirou, solicite outro convite.');if(data.session)window.history.replaceState(null,'',window.location.pathname)});return()=>{mounted=false}},[client])
+ async function submit(event){event.preventDefault();setBusy(true);const form=event.currentTarget,fields=new FormData(form),password=String(fields.get('password'));if(password!==fields.get('confirmation')){setMessage('As senhas precisam ser iguais.');setBusy(false);return}try{const {error}=await client.auth.updateUser({password});form.reset();if(error)throw Error();await client.auth.signOut();setReady(false);setDone(true);setMessage('Senha definida. Agora entre no painel com seu e-mail e senha.')}catch{setMessage('Não foi possível definir a senha. Verifique se o convite ainda é válido.')}finally{setBusy(false)}}
+ return <><p role="status">{message}</p>{ready&&<form onSubmit={submit} style={{display:'grid',gap:16}}><label>Nova senha<input type="password" name="password" minLength={12} required autoComplete="new-password" style={{display:'block',width:'100%',padding:12}}/></label><label>Confirme a senha<input type="password" name="confirmation" minLength={12} required autoComplete="new-password" style={{display:'block',width:'100%',padding:12}}/></label><button disabled={busy} className="button button-dark">{busy?'Salvando…':'Definir minha senha'}</button></form>}{done&&<Link href="/admin">Entrar na administração →</Link>}</>
+}
