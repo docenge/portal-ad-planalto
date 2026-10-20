@@ -1,0 +1,5 @@
+Ovelhinha: Sheep bleat, by Eviatar Bach (InverseHypercube), 9 October 2011.
+Source: https://commons.wikimedia.org/wiki/File:Sheep_bleat.ogg
+Original: https://upload.wikimedia.org/wikipedia/commons/2/28/Sheep_bleat.ogg
+License: CC0 1.0 Universal, https://creativecommons.org/publicdomain/zero/1.0/
+Adaptation: MP3 conversion, gentle fades, filtering and lower playback volume.

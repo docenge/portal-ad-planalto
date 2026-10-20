@@ -11,3 +11,10 @@ html[data-theme=dark] .invitation>div>p:last-child,html[data-theme=dark] .refere
 html[data-theme=dark] .reading-tools>.is-done{background:#354a31;border-color:#92a77e}html[data-theme=dark] .continue-banner small{color:#c5d4b2}html[data-theme=dark] .skip-link{background:var(--paper);color:var(--ink)}html[data-theme=dark] .mobile-menu nav{box-shadow:0 12px 15px #0005}html[data-theme=dark] .chapter-no,html[data-theme=dark] .mini-index a>span{color:#a5b49c}html[data-theme=dark] .desktop-nav a:hover,html[data-theme=dark] .mini-index a[aria-current=page]{color:#efaf82}
 @media(max-width:1100px){.theme-label{display:none}.theme-toggle{width:38px;padding:5px}.header-inner{gap:12px}}
 @media(max-width:620px){.header-inner{gap:8px}.header .brand{flex:1;min-width:0;gap:6px;font-size:clamp(11px,3.25vw,14px);letter-spacing:.4px}.header .brand>span{min-width:0}.header .brand small{font-size:7px;letter-spacing:.5px}.header .church-logo{width:42px;height:42px}.theme-toggle{width:36px;min-height:36px}.mobile-menu summary{gap:6px;padding-left:4px;font-size:11px}}
+
+/* Keep text on the fixed green faith panel light in both themes. */
+html[data-theme=dark] .belief-section{color:#f5f3e9}
+html[data-theme=dark] .belief-copy>p,html[data-theme=dark] .belief-layout h2{color:#f5f3e9}
+html[data-theme=dark] .belief-layout h2 em{color:#ead5a6}
+html[data-theme=dark] .belief-section .reference{color:#d7dfcd}
+html[data-theme=dark] input::placeholder,html[data-theme=dark] textarea::placeholder{color:#b8c4b0;opacity:1}
