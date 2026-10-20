@@ -18,3 +18,43 @@ html[data-theme=dark] .belief-copy>p,html[data-theme=dark] .belief-layout h2{col
 html[data-theme=dark] .belief-layout h2 em{color:#ead5a6}
 html[data-theme=dark] .belief-section .reference{color:#d7dfcd}
 html[data-theme=dark] input::placeholder,html[data-theme=dark] textarea::placeholder{color:#b8c4b0;opacity:1}
+
+/* Larger church identity and readable header navigation. */
+.header{height:auto;min-height:124px}
+.header-inner{min-height:124px;padding-block:12px;flex-wrap:wrap;gap:18px}
+.header .church-logo{width:96px;height:96px}
+.header .brand{font-size:25px;letter-spacing:.6px;gap:14px}
+.header .brand small{font-size:12px;letter-spacing:1.7px;line-height:1.5}
+.header .desktop-nav{font-size:16px;gap:20px;line-height:1.5}
+.header .desktop-nav a{white-space:nowrap}
+.header .header-cta{font-size:15px;gap:12px;padding:14px}
+.header .theme-toggle{font-size:14px;min-height:44px}
+@media(min-width:861px) and (max-width:1250px){
+ .header .desktop-nav{order:5;width:100%;justify-content:center;flex-wrap:wrap;gap:8px 28px}
+ .header-inner{row-gap:4px}
+}
+@media(max-width:860px){
+ .header-inner{min-height:108px;flex-wrap:nowrap;gap:12px}
+ .header .church-logo{width:80px;height:80px}
+ .header .brand{font-size:23px;gap:10px}
+ .header .brand small{font-size:11px;letter-spacing:1px}
+ .header .desktop-nav,.header .header-cta{display:none}
+ .header .mobile-menu{display:block}
+ .header .mobile-menu summary{font-size:16px;gap:8px;padding:12px 0}
+ .header .mobile-menu nav{top:100%;font-size:17px}
+ .header .mobile-menu nav a{font-size:17px;padding-block:17px}
+}
+@media(max-width:620px){
+ .header{min-height:96px}
+ .header .header-inner{width:calc(100% - 24px);min-height:96px;gap:8px}
+ .header .church-logo{width:62px;height:62px}
+ .header .brand{font-size:clamp(16px,4.3vw,22px);letter-spacing:0;gap:8px;flex:1;min-width:0}
+ .header .brand small{font-size:clamp(9px,2.4vw,11px);letter-spacing:.2px}
+ .header .theme-toggle{width:36px;min-height:40px;padding:4px}
+ .header .mobile-menu summary{font-size:14px;gap:5px}
+}
+@media(max-width:360px){
+ .header .header-inner{flex-wrap:wrap;gap:4px 10px}
+ .header .brand{flex-basis:calc(100% - 50px)}
+ .header .mobile-menu{margin-left:auto}
+}
