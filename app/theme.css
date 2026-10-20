@@ -58,3 +58,10 @@ html[data-theme=dark] input::placeholder,html[data-theme=dark] textarea::placeho
  .header .brand{flex-basis:calc(100% - 50px)}
  .header .mobile-menu{margin-left:auto}
 }
+
+/* Make the congregation search action explicit on every screen size. */
+.congregation-section .congregation-filters{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr) auto auto}
+.congregation-section .congregation-filters .congregation-search-button{background:var(--ink);color:var(--paper);font-weight:700;border-color:var(--ink);min-height:48px}
+.congregation-count{scroll-margin-top:24px}
+@media(max-width:860px){.congregation-section .congregation-filters{grid-template-columns:1fr 1fr}.congregation-section .congregation-filters>div{grid-column:1/-1}}
+@media(max-width:380px){.congregation-section .congregation-filters{grid-template-columns:1fr}}
