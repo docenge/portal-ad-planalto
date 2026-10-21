@@ -1,10 +1,10 @@
+import {readJson} from '../read-json.mjs'
 export const runtime='nodejs'
 export async function POST(request){
  if(process.env.NEWSLETTER_ENABLED!=='true'||!process.env.BREVO_API_KEY||!/^\d+$/.test(process.env.BREVO_LIST_ID||'')||!/^\d+$/.test(process.env.BREVO_DOI_TEMPLATE_ID||''))return Response.json({error:'Inscrições ainda não estão ativas.'},{status:503})
  const origin=request.headers.get('origin');if(!origin||origin!==new URL(request.url).origin)return Response.json({error:'Origem inválida.'},{status:403})
  if(!request.headers.get('content-type')?.includes('application/json'))return Response.json({error:'Formato inválido.'},{status:415})
- let input;try{const raw=await request.text();if(raw.length>2048)return Response.json({error:'Solicitação inválida.'},{status:413});input=JSON.parse(raw)}catch{return Response.json({error:'Solicitação inválida.'},{status:400})}
- if(!input||typeof input!=='object'||Array.isArray(input))return Response.json({error:'Solicitação inválida.'},{status:400})
+ let input;try{input=await readJson(request,2048)}catch(error){return Response.json({error:'Solicitação inválida.'},{status:error.status||400})}
  if(input.website)return Response.json({ok:true},{status:202})
  const email=typeof input.email==='string'?input.email.trim():''
  if(input.consent!==true||email.length>254||!/^\S+@[^\s@]+\.[^\s@]+$/.test(email))return Response.json({error:'Confira seu e-mail e consentimento.'},{status:400})
