@@ -9,12 +9,14 @@ for(const path of paths){
   assert.equal(response.status,200,`${path}: HTTP ${response.status}`)
   const html=await response.text()
   assert.match(html,/AD PLANALTO/)
-  assert.doesNotMatch(html,/Goiatuba|UMADGO|Pr\. Presidente|Setor Oeste/)
+  assert.doesNotMatch(html,/UMADGO|Pr\. Presidente|Setor Oeste/)
   assert.match(html,/id="conteudo"/)
   if(path.startsWith('/jornada/')){
     const chapter=chapters.find(c=>path.endsWith(c.slug))
     assert.ok(html.includes(chapter.title),`${path}: chapter title missing`)
-    assert.match(html,/Leia o texto na Bíblia/)
+    assert.match(html,/Leia o texto na Bíblia ADP/)
+    assert.match(html,/\/biblia\/leitor\/index\.html\?q=/)
+    assert.doesNotMatch(html,/biblegateway\.com|abre em outro site/)
     assert.match(html,/Marcar como lido/)
     assert.match(html,/Uma oração para este momento/)
   }
