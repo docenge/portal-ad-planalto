@@ -1,10 +1,10 @@
+import {readJson} from '../read-json.mjs'
 export const runtime='nodejs'
 export async function POST(request){
  if(process.env.COMMUNITY_REGISTRATION_ENABLED!=='true'||!process.env.SUPABASE_URL||!process.env.SUPABASE_SERVICE_ROLE_KEY)return Response.json({error:'Cadastro ainda não está ativo.'},{status:503})
  if(request.headers.get('origin')!==new URL(request.url).origin)return Response.json({error:'Origem inválida.'},{status:403})
  if(!request.headers.get('content-type')?.includes('application/json'))return Response.json({error:'Formato inválido.'},{status:415})
- let input;try{const raw=await request.text();if(raw.length>16000)return Response.json({error:'Cadastro muito longo.'},{status:413});input=JSON.parse(raw)}catch{return Response.json({error:'Dados inválidos.'},{status:400})}
- if(!input||typeof input!=='object'||Array.isArray(input))return Response.json({error:'Dados inválidos.'},{status:400})
+ let input;try{input=await readJson(request,16000)}catch(error){return Response.json({error:'Solicitação inválida.'},{status:error.status||400})}
  if(input.website)return Response.json({ok:true},{status:202})
  const email=typeof input.email==='string'?input.email.trim():''
  if(!/^\S+@[^\s@]+\.[^\s@]+$/.test(email)||email.length>254||input.detailsConsent!==true)return Response.json({error:'Confira e-mail e autorização.'},{status:400})
