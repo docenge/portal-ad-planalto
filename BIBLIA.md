@@ -23,7 +23,7 @@ A atualização automática abrange todo o acervo, mas não equivale a uma revis
 
 ## Harpa e publicação — 22/10/2026
 
-Leitor PWA em https://www.octatopdicas.com.br/biblia/leitor/index.html com botão de instalação, instruções por plataforma, verificação de atualização e confirmação de cache sem número de versão fixo. Cache v10 inclui Harpa e ferramentas de leitura. Navegações com referências em `?q=` usam o HTML em cache sem perder a busca quando offline. Instalação em lojas Android/iOS não foi realizada; a publicação é pelo navegador.
+Leitor PWA em https://www.octatopdicas.com.br/biblia/leitor/index.html com botão de instalação, instruções por plataforma, verificação de atualização e confirmação de cache sem número de versão fixo. Cache v11 inclui Harpa e ferramentas de leitura. Navegações com referências em `?q=` usam o HTML em cache sem perder a busca quando offline. Instalação em lojas Android/iOS não foi realizada; a publicação é pelo navegador.
 
 Harpa: busca por número/título, favoritos locais, navegação, cifras fornecidas no acervo e importação JSON validada de até 640 hinos, limitada a 2 MB. Não foi copiado acervo de terceiros sem comprovação de permissão. Letras completas continuam pendentes do arquivo autorizado do responsável. Aceita lista ou `{hinos:[...]}`, com numero, titulo e estrofes (texto ou objetos com texto/cifras).
 
