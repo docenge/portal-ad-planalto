@@ -20,3 +20,17 @@ O texto público e o ZIP passam a usar ortografia brasileira atualizada. A fonte
 Fontes: GetBible almeida (texto-base), Projeto Gutenberg 62383 (conferência independente) e a comparação entre original/atual de bibliaalmeida.com, que declara seus textos livres para distribuição. Não foi copiada a edição Concordância, que declara direitos reservados. Foram excluídas sugestões que trocavam vocabulário, sentido, flexões verbais ou acentos diferenciais válidos. Nomes próprios menos comuns podem manter grafias tradicionais.
 
 A atualização automática abrange todo o acervo, mas não equivale a uma revisão humana linha a linha. O arquivo público revisao-ortografica.json registra contagens e fontes. O cache do aplicativo foi atualizado para v2 para que instalações antigas recebam os textos corrigidos.
+
+## Harpa e publicação — 22/10/2026
+
+Leitor PWA em https://www.octatopdicas.com.br/biblia/leitor/index.html com botão de instalação, instruções por plataforma, verificação de atualização e confirmação de cache sem número de versão fixo. Cache v10 inclui Harpa e ferramentas de leitura. Navegações com referências em `?q=` usam o HTML em cache sem perder a busca quando offline. Instalação em lojas Android/iOS não foi realizada; a publicação é pelo navegador.
+
+Harpa: busca por número/título, favoritos locais, navegação, cifras fornecidas no acervo e importação JSON validada de até 640 hinos, limitada a 2 MB. Não foi copiado acervo de terceiros sem comprovação de permissão. Letras completas continuam pendentes do arquivo autorizado do responsável. Aceita lista ou `{hinos:[...]}`, com numero, titulo e estrofes (texto ou objetos com texto/cifras).
+
+Backup JSON exporta/restaura anotações, versículos favoritos e acervo da Harpa. Restauração valida referências contra a Bíblia e mescla preservando dados existentes. Anotações podem conter dados pessoais: o arquivo é gerado apenas quando o usuário escolhe baixar. Não há sincronização com Supabase por estes recursos.
+
+### Contas e senhas
+
+Formulário em `/biblia#baixar-app`: criar conta com confirmação de senha, entrar, reenviar confirmação, recuperar senha e definir nova senha com sessão de recuperação válida. Callbacks usam o domínio atual + `/biblia`. Acesso Minha conta também está no leitor. Download exige token verificado pelo servidor e e-mail confirmado. Nenhuma senha é gravada pelo código da aplicação; autenticação e sessões são administradas pelo SDK Supabase.
+
+Verificação pública em 22/10/2026: autenticação por e-mail habilitada, novos cadastros permitidos e confirmação de e-mail exigida. Configurações administrativas de SMTP e lista de retornos ainda precisam ser verificadas no Supabase. URLs a permitir: `https://www.octatopdicas.com.br/biblia` e `https://octatopdicas.com.br/biblia`. Não foram criados usuários de teste nem enviados e-mails. Teste completo de entrega/recuperação permanece pendente de uma conta de teste do responsável.

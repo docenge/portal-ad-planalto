@@ -2,66 +2,43 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@supabase/supabase-js'
 export default function DownloadBible({url, publicKey}) {
-  const [client, setClient] = useState(null), [session, setSession] = useState(null), [mode, setMode] = useState('signup'), [busy, setBusy] = useState(false), [message, setMessage] = useState(''), [installPrompt, setInstallPrompt] = useState(null)
-  useEffect(() => {
-    const key = publicKey
-    if (!url || !key) { setMessage('O cadastro está indisponível no momento. A leitura abaixo continua gratuita.'); return }
-    const supabase = createClient(url, key); setClient(supabase)
-    supabase.auth.getSession().then(({ data }) => setSession(data.session))
-    const { data } = supabase.auth.onAuthStateChange((_event, value) => setSession(value))
-    return () => data.subscription.unsubscribe()
-  }, [url, publicKey])
-  useEffect(() => {
-    if ('serviceWorker' in navigator) navigator.serviceWorker.register('/biblia/leitor/sw.js').catch(() => {})
-    const capture = event => { event.preventDefault(); setInstallPrompt(event) }
-    window.addEventListener('beforeinstallprompt', capture)
-    return () => window.removeEventListener('beforeinstallprompt', capture)
-  }, [])
-  async function install() {
-    await installPrompt.prompt()
-    await installPrompt.userChoice
-    setInstallPrompt(null)
-  }
-  async function submit(event) {
-    event.preventDefault(); setBusy(true); setMessage('')
-    const form = new FormData(event.currentTarget), email = String(form.get('email')).trim(), password = String(form.get('password'))
-    try {
-      const result = mode === 'signup' ? await client.auth.signUp({ email, password, options: { emailRedirectTo: window.location.origin + '/biblia' } }) : await client.auth.signInWithPassword({ email, password })
-      if (result.error) throw result.error
-      setMessage(result.data.session ? 'Você já pode baixar gratuitamente.' : 'Confira seu e-mail para confirmar a inscrição. Depois, volte aqui e entre com seu e-mail e senha.')
-    } catch { setMessage('Não foi possível concluir. Confira os dados e, se já tem cadastro, use Entrar. Se necessário, tente novamente mais tarde.') }
-    finally { setBusy(false) }
-  }
-  async function download() {
-    setBusy(true); setMessage('')
-    try {
-      const { data } = await client.auth.getSession()
-      if (!data.session) throw Error()
-      const response = await fetch('/api/biblia/download', { headers: { Authorization: `Bearer ${data.session.access_token}` } })
-      if (!response.ok) throw Error()
-      const url = URL.createObjectURL(await response.blob()), link = document.createElement('a')
-      link.href = url; link.download = 'biblia-ad-planalto.zip'; document.body.append(link); link.click(); link.remove(); setTimeout(() => URL.revokeObjectURL(url), 60000)
-      setMessage('Download iniciado. Extraia o ZIP e abra index.html. Se o celular bloquear arquivos HTML locais, use a leitura neste site.')
-    } catch { setMessage('Não foi possível baixar. Entre novamente e tente outra vez.') }
-    finally { setBusy(false) }
-  }
-  const inputStyle = { display: 'block', width: '100%', padding: 12, margin: '8px 0 16px', border: '1px solid #cbd5e1', borderRadius: 6 }
-  return <section id="baixar-app" style={{ background: '#edf2e8', borderRadius: 12, padding: 24, margin: '24px 0' }}>
-    <h2>Baixar o app gratuitamente</h2>
-    <p>Instale pelo navegador para ler em Android, iPhone/iPad, Windows ou Linux. A leitura funciona sem internet depois que o texto completo for salvo no aparelho.</p>
-    {installPrompt && <button onClick={install}>Instalar Bíblia neste aparelho</button>}
-    <p>No Android, Windows e Linux, use Chrome ou Edge e escolha “Instalar aplicativo” no menu. No iPhone/iPad, abra o leitor em tela inteira no Safari e use Compartilhar → Adicionar à Tela de Início.</p>
-    <a href="/biblia/leitor/index.html">Abrir a Bíblia para instalar</a>
-    <p>Também oferecemos um ZIP com a versão para navegador e seu código-fonte após inscrição. Não é um APK nem um aplicativo de loja. A instalação pelo navegador não exige cadastro.</p>
-    {session ? <><p>Você está conectado.</p><button disabled={busy} onClick={download}>{busy ? 'Preparando…' : 'Baixar o app'}</button> <button disabled={busy} onClick={() => client.auth.signOut()}>Sair</button></> : <>
-      <p>Faça sua inscrição com e-mail e senha para baixar.</p>
-      <div><button type="button" onClick={() => setMode('signup')} aria-pressed={mode === 'signup'}>Fazer inscrição</button> <button type="button" onClick={() => setMode('login')} aria-pressed={mode === 'login'}>Já tenho cadastro</button></div>
-      <form onSubmit={submit} style={{ maxWidth: 430, marginTop: 20 }}>
-        <label>E-mail<input style={inputStyle} name="email" type="email" autoComplete="email" required maxLength={254} /></label>
-        <label>Senha<input style={inputStyle} name="password" type="password" autoComplete={mode === 'signup' ? 'new-password' : 'current-password'} minLength={8} required /></label>
-        {mode === 'signup' && <label style={{ display: 'block', marginBottom: 16 }}><input type="checkbox" required /> Quero criar minha conta para acessar o download. O e-mail será utilizado para autenticação e confirmação da conta.</label>}
-        <button disabled={!client || busy}>{busy ? 'Aguarde…' : mode === 'signup' ? 'Fazer inscrição gratuita' : 'Entrar'}</button>
-      </form></>}
-    <p role="status" aria-live="polite">{message}</p>
-  </section>
+ const [client,setClient]=useState(null),[session,setSession]=useState(null),[mode,setMode]=useState('signup'),[busy,setBusy]=useState(false),[loading,setLoading]=useState(true),[message,setMessage]=useState(''),[showPassword,setShowPassword]=useState(false),[email,setEmail]=useState(''),[cooldown,setCooldown]=useState(0)
+ useEffect(()=>{let mounted=true;if(!url||!publicKey){setMessage('Cadastro temporariamente indisponível. Você pode abrir e instalar a Bíblia gratuitamente.');setLoading(false);return}
+  let supabase;try{supabase=createClient(url,publicKey,{auth:{flowType:'implicit'}})}catch{setMessage('Cadastro indisponível no momento. A leitura continua disponível.');setLoading(false);return}setClient(supabase)
+  const fragment=new URLSearchParams(window.location.hash.slice(1)),recovering=fragment.get('type')==='recovery';if(recovering)setMode('recovery');if(fragment.has('error')||fragment.has('error_code')){setMode('reset');setMessage('Este link de acesso expirou ou é inválido. Solicite um novo link.');window.history.replaceState(null,'',window.location.pathname+window.location.search+'#baixar-app')}
+  const {data}=supabase.auth.onAuthStateChange((event,value)=>{if(!mounted)return;setSession(value);setLoading(false);if(event==='PASSWORD_RECOVERY'){setMode('recovery');setMessage('Defina e confirme sua nova senha.')}if(event==='SIGNED_OUT')setMode('login')})
+  supabase.auth.getSession().then(({data,error})=>{if(!mounted)return;setSession(data.session);setLoading(false);if(error)setMessage('Sua sessão expirou. Entre novamente.');if(recovering&&!data.session)setMessage('O link de recuperação expirou ou é inválido. Solicite um novo link em Esqueci minha senha.')}).catch(()=>{if(mounted){setLoading(false);setMessage('Não foi possível verificar sua sessão. Tente novamente.')}})
+  return()=>{mounted=false;data.subscription.unsubscribe()}
+ },[url,publicKey])
+ useEffect(()=>{if(!cooldown)return;const timer=setInterval(()=>setCooldown(n=>Math.max(0,n-1)),1000);return()=>clearInterval(timer)},[cooldown])
+ const changeMode=value=>{setMode(value);setMessage('');setShowPassword(false)}
+ function errorMessage(error){if(error?.status===429||error?.code?.includes('rate_limit'))return 'Muitas tentativas. Aguarde alguns minutos antes de tentar novamente.';if(error?.code==='email_not_confirmed')return 'Confirme seu e-mail antes de entrar. Você pode reenviar a confirmação abaixo.';if(error?.code==='invalid_credentials')return 'E-mail ou senha incorretos. Confira os dados ou use Esqueci minha senha.';if(error?.code==='weak_password')return 'Use uma senha mais forte, com pelo menos 8 caracteres.';return 'Não foi possível concluir. Confira sua conexão e tente novamente.'}
+ async function submit(event){event.preventDefault();if(!client||busy)return;const form=event.currentTarget,fields=new FormData(form),password=String(fields.get('password')||'');setBusy(true);setMessage('');try{
+  if(mode==='reset'){if(cooldown)return;const {error}=await client.auth.resetPasswordForEmail(email.trim(),{redirectTo:window.location.origin+'/biblia'});if(error)throw error;setCooldown(60);setMessage('Se houver uma conta para este e-mail, você receberá um link para definir uma nova senha. Confira também o spam.');return}
+  if((mode==='signup'||mode==='recovery')&&password!==fields.get('confirmation')){setMessage('As senhas não coincidem. Digite a mesma senha nos dois campos.');return}
+  if(mode==='recovery'){const {error}=await client.auth.updateUser({password});if(error)throw error;form.reset();setMode('login');setMessage('Senha atualizada. Sua conta está pronta para uso.');return}
+  const result=mode==='signup'?await client.auth.signUp({email:email.trim(),password,options:{emailRedirectTo:window.location.origin+'/biblia'}}):await client.auth.signInWithPassword({email:email.trim(),password});if(result.error)throw result.error;form.reset();setShowPassword(false);setMessage(result.data.session?'Você entrou na sua conta. O download está disponível.':'Confira seu e-mail para confirmar o cadastro. Depois volte aqui e entre com e-mail e senha. Se já possui conta, use Entrar.');
+ }catch(error){setMessage(errorMessage(error))}finally{setBusy(false)}}
+ async function resend(){if(!client||!email.trim()||busy||cooldown)return;setBusy(true);try{const {error}=await client.auth.resend({type:'signup',email:email.trim(),options:{emailRedirectTo:window.location.origin+'/biblia'}});if(error)throw error;setCooldown(60);setMessage('Se a confirmação estiver pendente, enviaremos um novo link. Confira seu e-mail e o spam.')}catch(error){setMessage(errorMessage(error))}finally{setBusy(false)}}
+ async function logout(){setBusy(true);try{const {error}=await client.auth.signOut();if(error)throw error;setSession(null);setMode('login');setMessage('Você saiu da conta neste navegador.')}catch(error){setMessage(errorMessage(error))}finally{setBusy(false)}}
+ async function download(){setBusy(true);setMessage('');try{const {data,error}=await client.auth.getSession();if(error||!data.session)throw Error();const response=await fetch('/api/biblia/download',{headers:{Authorization:`Bearer ${data.session.access_token}`},cache:'no-store'});if(!response.ok){setMessage(response.status===401?'Entre novamente e confirme seu e-mail para baixar.':'Download indisponível no momento. Você pode usar a Bíblia no navegador.');return}const objectURL=URL.createObjectURL(await response.blob()),link=document.createElement('a');link.href=objectURL;link.download='biblia-ad-planalto.zip';document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(objectURL),60000);setMessage('Download iniciado. Extraia o ZIP e abra index.html. Para instalar no celular, use Abrir e instalar Bíblia ADP.')}catch{setMessage('Não foi possível baixar. Confira sua conexão e entre novamente.')}finally{setBusy(false)}}
+ const passwordFields=mode!=='reset'
+ return <section id="baixar-app" className="bible-account" aria-labelledby="account-title">
+  <span className="account-eyebrow">SUA CONTA BÍBLIA ADP</span><h2 id="account-title">{mode==='recovery'?'Definir nova senha':'Leitura gratuita. Uma conta para baixar.'}</h2>
+  <p>Abrir e instalar a Bíblia pelo navegador é gratuito e dispensa cadastro. Crie uma conta para baixar o pacote ZIP.</p>
+  <a href="/biblia/leitor/index.html">Abrir e instalar Bíblia ADP →</a>
+  {loading?<p role="status">Verificando sua conta…</p>:session&&mode!=='recovery'?<div className="account-connected"><p>Conectado como <strong>{session.user.email}</strong>.</p><div className="account-actions"><button disabled={busy} onClick={download}>{busy?'Aguarde…':'Baixar pacote da Bíblia ADP'}</button><button disabled={busy} onClick={logout}>Sair da conta</button></div><p>Anotações, favoritos e hinos ficam neste aparelho. Use o backup do leitor para transferi-los.</p></div>:<>
+   {mode!=='recovery'&&<div className="account-tabs" aria-label="Acesso à conta"><button type="button" disabled={busy} onClick={()=>changeMode('signup')} aria-pressed={mode==='signup'}>Criar conta</button><button type="button" disabled={busy} onClick={()=>changeMode('login')} aria-pressed={mode==='login'}>Entrar</button><button type="button" disabled={busy} onClick={()=>changeMode('reset')} aria-pressed={mode==='reset'}>Esqueci minha senha</button></div>}
+   <form onSubmit={submit} className="account-form" aria-label={mode==='signup'?'Criar conta':mode==='reset'?'Recuperar senha':mode==='recovery'?'Definir nova senha':'Entrar na conta'}>
+    {mode!=='recovery'&&<label htmlFor="account-email">E-mail<input id="account-email" name="email" type="email" autoComplete="email" autoCapitalize="none" spellCheck={false} value={email} onChange={e=>setEmail(e.target.value)} required maxLength={254} disabled={busy}/></label>}
+    {passwordFields&&<><label htmlFor="account-password">{mode==='recovery'?'Nova senha':'Senha'}<input id="account-password" name="password" type={showPassword?'text':'password'} autoComplete={mode==='login'?'current-password':'new-password'} minLength={mode==='login'?undefined:8} maxLength={128} required disabled={busy} aria-describedby={mode==='login'?undefined:'password-help'}/></label>{mode!=='login'&&<><small id="password-help">Use pelo menos 8 caracteres. Combine letras, números e símbolos.</small><label htmlFor="account-confirmation">Confirmar senha<input id="account-confirmation" name="confirmation" type={showPassword?'text':'password'} autoComplete="new-password" minLength={8} maxLength={128} required disabled={busy}/></label></>}<label className="account-check"><input type="checkbox" checked={showPassword} onChange={e=>setShowPassword(e.target.checked)}/> Mostrar senha</label></>}
+    {mode==='signup'&&<label className="account-check"><input type="checkbox" required disabled={busy}/> Quero criar minha conta. Meu e-mail será usado para acesso e confirmação do cadastro.</label>}
+    <button disabled={!client||busy||(mode==='reset'&&cooldown>0)||(mode==='recovery'&&!session)}>{busy?'Aguarde…':mode==='signup'?'Criar conta gratuita':mode==='reset'?cooldown?'Aguarde '+cooldown+'s':'Enviar link de recuperação':mode==='recovery'?'Salvar nova senha':'Entrar'}</button>
+   </form>
+   {mode!=='recovery'&&<button className="account-resend" type="button" disabled={!client||busy||!email.trim()||cooldown>0} onClick={resend}>{cooldown?'Reenviar em '+cooldown+'s':'Reenviar confirmação de e-mail'}</button>}
+   {mode==='recovery'&&!session&&<button type="button" onClick={()=>changeMode('reset')}>Solicitar novo link</button>}
+  </>}
+  <p className="account-message" role="status" aria-live="polite">{message}</p>
+  <p className="account-privacy">Use uma senha exclusiva. A conta é autenticada pelo Supabase. <a href="/sobre-este-site">Privacidade</a></p>
+ </section>
 }
