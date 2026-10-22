@@ -65,3 +65,5 @@ html[data-theme=dark] input::placeholder,html[data-theme=dark] textarea::placeho
 .congregation-count{scroll-margin-top:24px}
 @media(max-width:860px){.congregation-section .congregation-filters{grid-template-columns:1fr 1fr}.congregation-section .congregation-filters>div{grid-column:1/-1}}
 @media(max-width:380px){.congregation-section .congregation-filters{grid-template-columns:1fr}}
+
+.scripture-reference{text-decoration:underline;text-underline-offset:3px}.scripture-reference:hover{opacity:.8}.scripture-reference:focus-visible{outline:3px solid var(--orange);outline-offset:4px}
